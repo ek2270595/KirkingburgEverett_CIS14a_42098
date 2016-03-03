@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Assignment1</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <script>
+
+            var score; // initialize variable to hold a score
+            var grade; // initialize variable to hold the grade letter
+
+            score = prompt("Enter a score from 0 to 100"); //Get a score from the user and assign it to the variable "score"
+
+            // Assign letter grade based on score number
+            (score > 89) ? grade = 'A': 
+            (score > 79) ? grade = 'B':
+            (score > 69) ? grade = 'C':
+            (score > 59) ? grade = 'D':
+            grade = 'F';
+
+            // Display the score and grade letter
+            document.write("<p> The submitted score of ");
+            document.write(score);
+            document.write(" equates to the letter grade ");
+            document.write(grade);
+            document.write("</p>");
+        </script>
+    </body>
+</html>
