@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html lang="en">
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="generator" content="CSE HTML Validator (https://www.htmlvalidator.com/)">
+</head>
+
+<body>
+	<script>
+	var hrsWrkd=50;//Hours worked
+	var payRate=10;//Pay rate in dollars per hour
+	var ovrtime=40;//Hours at which over time kicks in
+	var paycheck;
+	
+	if(hrsWrkd<ovrtime)paycheck=hrsWrkd*payRate;
+	else paycheck=ovrtime*payRate+(2*payRate*(hrsWrkd-ovrtime));
+	
+	var str="<h1>Hours Worked = "+hrsWrkd+"</h1>";
+	str+=	"<h1>Pay Rate = "+payRate+"</h1>";
+	str+=	"<h1>Overtime = "+ovrtime+"</h1>";
+	str+=	"<h1>Pay Check = "+paycheck+"</h1>";
+	document.write(str);
+	</script>
+</body>
+</html>
