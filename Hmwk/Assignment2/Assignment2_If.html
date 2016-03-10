@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Assignment 2 If</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    </head>
+    <body>
+        <script>
+            /*
+            Everett Kirkingburg
+            CIS-14a 42098
+            Assignment 2 If
+            03/09/2016
+            */
+           
+            var payRate   = prompt("Enter your pay rate: ");    //prompts the user for pay rate
+            var hrsWorked = prompt("Enter hours worked: " );    //prompts user for hours worked
+            var paycheck;                                       //holds value of calculated paycheck
+            
+            if (hrsWorked > 40)                   paycheck = (payRate*20)+(2*payRate*20)+(3*payRate*(hrsWorked-40)); //calculates triple and double time if over 40 hours
+            if (hrsWorked > 20 && hrsWorked <=40) paycheck = (payRate*20)+(2*payRate*(hrsWorked-20));                //calculates double time if over 20 hours
+            if (hrsWorked <= 20)                  paycheck =  payRate*hrsWorked;                                     //calculates straight time if 20 hours or under
+            
+            document.write("<p> Your paycheck comes out to $" + paycheck + ".</p>");                                 //displays paycheck amount
+            
+        </script>
+    </body>
+</html>
