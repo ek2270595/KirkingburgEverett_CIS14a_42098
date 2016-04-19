@@ -1,0 +1,36 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <title>Paycheck Table</title>
+    </head>
+    <body>
+        <h1>Paycheck Table</h1>
+        <script type="text/javascript">
+            var rate1 = 10;
+            var rate2 = 15;
+            var hrsWorked = prompt("Enter hours worked: ");
+            var paycheck;
+            var str = '<table border="1" style="width:auto">';
+                str += "<tr><th>Hours</th><th>Pay Rate 1</th><th>Pay Rate 2</th></tr>";
+                
+            function calculate(payRate, hour){
+                (hour > 40) ? paycheck = (payRate*20)+(2*payRate*20)+(3*payRate*(hour-40)):
+                (hour > 20) ? paycheck = (payRate*20)+(2*payRate*(hour-20)):
+                              paycheck =  payRate*hour;
+                return paycheck;
+            }
+            
+            for(var hour = 0; hour <= hrsWorked; hour++){
+                str += "<tr>";
+                str += "<td>"+hour+"</td>";
+                str += "<td>"+calculate(rate1, hour).toFixed(2)+"</td>";
+                str += "<td>"+calculate(rate2, hour).toFixed(2)+"</td>";
+                str += "</tr>";
+            }
+            
+            str += "</table>";
+            document.write(str);
+        </script>
+    </body>
+</html>
