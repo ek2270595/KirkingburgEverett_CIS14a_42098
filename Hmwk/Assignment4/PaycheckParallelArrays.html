@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>Paycheck Table Parallel Arrays</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>td {text-align: right;}</style>
+    </head>
+    <body>
+        <script>
+            //Declare variables
+            var hrLimit = 72;
+            var payRate = 10.25;
+            var taxRate = 0.10;
+            var tax = [];
+            var grossPay = [];
+            var netPay = [];
+            
+            //Create stringified HTML heading to display the pay rate, tax, and overtime hours
+            var str = "<h1>Pay Rate $"+payRate.toFixed(2)+"/hr</h1>";
+            str +=    "<h1>Tax is "+taxRate*100+"%</h1>";
+            str +=    "<h1>Double time starts after 20 hours</h1>";
+            str +=    "<h1>Triple time starts after 40 hours</h1>";
+            
+            //Calculate Paycheck
+            for(var hour = 0; hour <= hrLimit; hour++){
+                //Determine if overtime has kicked in and calculate gross pay at current hour
+                grossPay[hour] = (hour > 40) ? (payRate*20)+(2*payRate*20)+(3*payRate*(hour-40)):
+                                 (hour > 20) ? (payRate*20)+(2*payRate*(hour-20)):
+                                                payRate*hour;
+                //Calculate tax at current hour
+                tax[hour] = grossPay[hour] * taxRate;
+                //Calculate net pay at current hour
+                netPay[hour] = grossPay[hour] - tax[hour];
+            }
+            
+            //Create and store HTML table heading to string
+            str += '<table border="1" style="width:auto">';
+            str += "<tr>";
+            str += "<th>Hour(s)</th>";
+            str += "<th>Gross Pay</th>";
+            str += "<th>Pay Rate</th>";
+            str += "<th>Tax</th>";
+            str += "<th>Net Pay</th>";
+            str += "</tr>";
+            
+            //Loop through arrays and store table data to string
+            for(var hour = 0; hour <= hrLimit; hour++){
+                //Variable to hold the overtime pay rate
+                var rate = (hour > 40) ? payRate*3:
+                           (hour > 20) ? payRate*2:
+                                         payRate;
+                //Fill a row of table data with current value of each variable
+                str += "<tr>";
+                str += "<td>"+hour+"</td>";
+                str += "<td>"+grossPay[hour].toFixed(2)+"</td>";
+                str += "<td>"+rate.toFixed(2)+"</td>";
+                str += "<td>"+tax[hour].toFixed(2)+"</td>";
+                str += "<td>"+netPay[hour].toFixed(2)+"</td>";
+                str += "</tr>";
+            }
+            str += "</table>";
+            //Display the table
+            document.write(str);
+            
+            
+        </script>
+    </body>
+</html>
