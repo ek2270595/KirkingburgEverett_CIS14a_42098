@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Paycheck Table 2D Array</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>td {text-align: right;}</style>
+       <script type="text/javascript" src="getForm.js"></script>
+    </head>
+    <body>
+        <script>
+            //Declare variables
+            var url = document.location.href;
+            var $_GET = getForm(url);            
+            var hrLimit = parseInt($_GET["hrLimit"]);
+            var payRate = parseFloat($_GET["payRate"]);
+            var taxRate = 0.10;
+            var table = [];
+            for(var i = 0; i <= hrLimit; i++){
+                table[i] = [];
+            }
+            //Create stringified HTML heading to display the pay rate, tax, and overtime hours
+            var str = "<h1>Pay Rate $"+payRate.toFixed(2)+"/hr</h1>";
+            str +=    "<h1>Tax is "+taxRate*100+"%</h1>";
+            str +=    "<h1>Double time starts after 20 hours</h1>";
+            str +=    "<h1>Triple time starts after 40 hours</h1>";
+            
+            //Create and store HTML table heading to string
+            str += '<table border="1" style="width:auto">';
+            str += "<tr>";
+            str += "<th>Hour(s)</th>";
+            str += "<th>Gross Pay</th>";
+            str += "<th>Pay Rate</th>";
+            str += "<th>Tax</th>";
+            str += "<th>Net Pay</th>";
+            str += "</tr>";
+            
+            document.write(str);
+            str = "";
+            
+            //Calculate columns of data for each hour worked
+            for(var hour = 0; hour <= hrLimit; hour++){
+                table[hour][0] = hour;                                                            //Hour
+                table[hour][1] = (hour > 40) ? (payRate*20)+(2*payRate*20)+(3*payRate*(hour-40)): //Gross Pay
+                                 (hour > 20) ? (payRate*20)+(2*payRate*(hour-20)):
+                                                payRate*hour;
+                table[hour][2] = (hour > 40) ? payRate*3:                                         //Pay Rate
+                                 (hour > 20) ? payRate*2:
+                                               payRate;
+                table[hour][3] = table[hour][1]*taxRate;                                          //Taxes
+                table[hour][4] = table[hour][1]-table[hour][3];                                   //Net Pay
+            }
+            
+            //Write the array elements and HTML table tags to the string
+            for(var row = 0; row <= hrLimit; row++){
+                str += "<tr>";
+                for(var col = 0; col < 5; col++){
+                    (col !== 0) ? str += "<td>"+parseFloat(table[row][col]).toFixed(2)+"</td>":
+                                  str += "<td>"+table[row][col]+"</td>";
+                }
+                str += "</tr>";
+            }
+            str += "</table>";
+            
+            //Display the table
+            document.write(str);
+            
+        </script>
+    </body>
+</html>
