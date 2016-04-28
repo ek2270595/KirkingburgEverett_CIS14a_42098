@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<!--
+Everett Kirkingburg
+CIS14a - 42098
+April 27, 2016
+-->
+<html>
+    <head>
+        <title>Survey Results</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="getForm.js"></script>
+    </head>
+    <body>
+        <h3>Survey Results</h3>
+        <fieldset>
+            <legend>Question 1</legend>
+            How large is the military budget?<br>
+            <var id="0"></var>% of users answered &GT;20% of the Federal Budget<br>
+            <var id="1"></var>% of users answered &lt;20% of the Federal Budget<br>
+        </fieldset>
+        <fieldset>
+            <legend>Question 2</legend>
+            How large is NASA's budget?<br>
+            <var id="2"></var>% of users answered &GT;5% of the Federal Budget<br>
+            <var id="3"></var>% of users answered &lt;5% of the Federal Budget<br>
+        </fieldset>
+        <fieldset>
+            <legend>Question 3</legend>
+            How large is the budget for Welfare and Entitlements?<br>
+            <var id="4"></var>% of users answered &GT;65% of the Federal Budget<br>
+            <var id="5"></var>% of users answered &lt;65% of the Federal Budget<br>
+        </fieldset>
+        <h3>Actual Expenditures</h3>
+        <img src="FedBudgetPi.png" width="385" height="679" alt="FedBudgetPi"/>
+        <form action="index.html">
+            <button type="submit">Start Over</button>
+            <button onclick="deleteResults()">Delete Results</button>
+        </form>
+        <script>
+            var str = localStorage.getItem("results");
+            console.log(str); //display contents of local storage item in console
+            var results = JSON.parse(str);
+            var numSurveys = results.length;
+            var question = [0,0,0];
+            var percentage = [];
+            
+            //Checks how many times each of the questions were answered with A
+            for(var i = 0; i < results.length; i++){
+                var obj = results[i];
+                for(property in obj){
+                    if(property === "qOne" && obj[property] === "A") question[0]+=1;
+                    if(property === "qTwo" && obj[property] === "A") question[1]+=1;
+                    if(property === "qThr" && obj[property] === "A") question[2]+=1;
+                }
+            }
+            
+            //Stores percentages of times questions 1 through 3 were
+            //answered with A or B
+            var count = 0;
+            for(var i = 0; i < question.length; i++){
+                percentage[count] = (question[i]/numSurveys)*100;
+                count++;
+                percentage[count] = ((numSurveys - question[i])/numSurveys)*100;
+                count++;
+            }
+            
+            //Display percentages of each answer sequentially
+            for(var i = 0; i < percentage.length; i++){
+                document.getElementById(i).innerHTML = parseFloat(percentage[i]).toFixed(1);
+            }
+            
+        </script>
+    </body>
+</html>

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<!--
+Everett Kirkingburg
+CIS14a - 42098
+April 27, 2016
+-->
+<html>
+    <head>
+        <title>Your Answers</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <script type="text/javascript" src="getForm.js"></script>
+    </head>
+    <body>
+        <h3>Your Answers</h3>
+        <fieldset>
+            <p><var id="answer1"></var> 20% of the federal budget is spent on the military</p>
+            <p><var id="answer2"></var> 5% of the federal budget funds NASA</p>
+            <p><var id="answer3"></var> 65% of the federal budget is spent on welfare and entitlements</p>
+        </fieldset>
+        <h3>Actual Expenditures</h3>
+        <img src="FedBudgetPi.png" width="385" height="679" alt="FedBudgetPi"/>
+        <form action="surveyResults.html">
+            <button type="submit">View Totals</button>
+        </form>
+        <script>
+            var url = document.location.href;
+            var $_GET = getForm(url);
+            var results = [];
+            
+            //show whether the user answered greater than or less than
+            var count = 1;
+            for(property in $_GET){
+                var id = "answer"+count;
+                if($_GET[property] === "A"){
+                    document.getElementById(id).innerHTML = "More than";
+                }
+                else{
+                    document.getElementById(id).innerHTML = "Less than";
+                }
+                count++;
+            }
+            
+            //if the local storage string does not exist, 
+            //store the object of answeres in an array,
+            //stringify the array, and set it in local storage
+            if(localStorage.getItem("results") === null){
+                results[0] = $_GET;
+                var str = JSON.stringify(results);
+                localStorage.setItem("results",str);
+            }
+            //else pull the string from storage, parse back into an array,
+            //append the new object of answers to the array, and store back
+            else{
+                var str = localStorage.getItem("results");
+                results = JSON.parse(str);
+                var number = results.length;
+                results[number] = $_GET;
+                str = JSON.stringify(results);
+                localStorage.setItem("results",str);
+            }
+        </script>
+    </body>
+</html>
