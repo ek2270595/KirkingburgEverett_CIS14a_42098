@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!--
+Everett Kirkingburg
+CIS14a - 42098
+May 4, 2016
+-->
+<html>
+    <head>
+        <title>Survey Results</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .container{
+                margin: auto;
+                background-color: lightgray;
+                width: 800px;
+                height: auto;
+            }
+            .chart{
+                display: table-cell;
+            }
+            .info{
+                background-color: gainsboro;
+                display: table-cell;
+                width: 415px;
+            }
+        </style>
+    </head>
+    <body onload="userResults()">
+        <div id="userResults" class="container">
+            <div class="chart">
+                <h3>Actual Expenditures</h3>
+                <img src="FedBudgetPi.png" width="385" height="679" alt="FedBudgetPi"/>
+            </div>
+            <div class="info">
+                <h3>Your Answers (in bold)</h3>
+                <fieldset>
+                <legend>Question 1</legend>
+                    How large is the military budget?<br>
+                    <font id="0" color="#ff3333">&GT;20% of the Federal Budget</font><br>
+                    <font id="1" color="#00cc00">&lt;20% of the Federal Budget</font><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Question 2</legend>
+                    How large is NASA's budget?<br>
+                    <font id="2" color="#ff3333">&GT;5% of the Federal Budget</font><br>
+                    <font id="3" color="#00cc00">&lt;5% of the Federal Budget</font><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Question 3</legend>
+                    How large is the budget for Welfare and Entitlements?<br>
+                    <font id="4" color="#00cc00">&GT;65% of the Federal Budget</font><br>
+                    <font id="5" color="#ff3333">&lt;65% of the Federal Budget</font><br>
+                </fieldset>
+            </div>
+            <button onclick="totalResults()">View Totals</button>
+        </div>
+        <div id="totalResults" class="container" hidden>
+            <div class="chart">
+                <h3>Actual Expenditures</h3>
+                <img src="FedBudgetPi.png" width="385" height="679" alt="FedBudgetPi"/>
+            </div>
+            <div class="info">
+                <h3>Survey Results</h3>
+                <fieldset>
+                    <legend>Question 1</legend>
+                    How large is the military budget?<br>
+                    <font id="6" color="#ff3333">% of users answered &GT;20% of the Federal Budget</font><br>
+                    <font id="7" color="#00cc00">% of users answered &lt;20% of the Federal Budget</font><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Question 2</legend>
+                    How large is NASA's budget?<br>
+                    <font id="8" color="#ff3333">% of users answered &GT;5% of the Federal Budget</font><br>
+                    <font id="9" color="#00cc00">% of users answered &lt;5% of the Federal Budget</font><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Question 3</legend>
+                    How large is the budget for Welfare and Entitlements?<br>
+                    <font id="10" color="#00cc00">% of users answered &GT;65% of the Federal Budget</font><br>
+                    <font id="11" color="#ff3333">% of users answered &lt;65% of the Federal Budget</font><br>
+                </fieldset>
+            </div>
+            <form action="index.html">
+                <button type="submit">Start Over</button>
+            </form>
+            <button onclick="deleteResults()">Delete Results</button>
+        </div>
+        <script>
+            function getForm(url){
+                var info=url.split("?");
+                var nameValuePairs=info[1].split("&");
+                var $_GET = new Object;
+                for(var i=0;i<nameValuePairs.length-1;i++){
+                    var map=nameValuePairs[i].split("=");
+                    var name=map[0];
+                    var value=map[1];
+                    $_GET[name]=value;
+                }
+                return $_GET;
+            }
+            function userResults(){
+                var url = document.location.href;
+                var $_GET = getForm(url);
+                var results = [];
+                //show whether the user answered greater than or less than
+                var count = 0;
+                for(property in $_GET){
+                    if($_GET[property] === "A"){
+                        var id = document.getElementById(count);
+                        id.style.fontWeight = "900";
+                        count++;
+                    }
+                    else{
+                        count++;
+                        var id = document.getElementById(count);
+                        id.style.fontWeight = "900";
+                    }
+                    count++;
+                }
+                //if the local storage string does not exist, 
+                //store the object of answeres in an array,
+                //stringify the array, and set it in local storage
+                if(localStorage.getItem("Totals") === null){
+                    results[0] = $_GET;
+                    var str = JSON.stringify(results);
+                    localStorage.setItem("Totals",str);
+                }
+                //else pull the string from storage, parse back into an array,
+                //append the new object of answers to the array, and store back
+                else{
+                    var str = localStorage.getItem("Totals");
+                    results = JSON.parse(str);
+                    var number = results.length;
+                    results[number] = $_GET;
+                    str = JSON.stringify(results);
+                    localStorage.setItem("Totals",str);
+                }
+            }
+            
+            function totalResults(){
+                document.getElementById("userResults").setAttribute("hidden",true);
+                document.getElementById("totalResults").removeAttribute("hidden");
+                var str = localStorage.getItem("Totals");
+                console.log(str); //display contents of local storage item in console
+                var results = JSON.parse(str);
+                var numSurveys = results.length;
+                var question = [0,0,0];
+                var percentage = [];
+                //Checks how many times each of the questions were answered with A
+                for(var i = 0; i < results.length; i++){
+                    var obj = results[i];
+                    for(property in obj){
+                        if(property === "qOne" && obj[property] === "A") question[0]+=1;
+                        if(property === "qTwo" && obj[property] === "A") question[1]+=1;
+                        if(property === "qThr" && obj[property] === "A") question[2]+=1;
+                    }
+                }
+                //Stores percentages of times questions 1 through 3 were
+                //answered with A or B
+                var count = 0;
+                for(var i = 0; i < question.length; i++){
+                    percentage[count] = (question[i]/numSurveys)*100;
+                    count++;
+                    percentage[count] = ((numSurveys - question[i])/numSurveys)*100;
+                    count++;
+                }
+                //Display percentages of each answer sequentially
+                for(var i = 0; i < percentage.length; i++){
+                    var id = document.getElementById(6+i);
+                    id.innerHTML = percentage[i].toFixed(1)+id.innerHTML;
+                }
+            }
+            function deleteResults(){
+                localStorage.removeItem("Totals");
+            }
+        </script>
+    </body>
+</html>
