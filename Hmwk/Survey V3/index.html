@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<!--
+Everett Kirkingburg
+CIS14a - 42098
+May 18, 2016
+-->
+<html>
+    <head>
+        <title>User Login</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            form {
+                display: table-cell;
+                width: 400px;
+            }
+        </style>
+    </head>
+    <body>
+        <div style="width: 800px; margin-left: auto; margin-right: auto; background-color:gainsboro;">
+            <h3>Federal Budget Survey Sign-In</h3>
+            <form id="create" name="create" method="post" action="survey.html" onSubmit="return validate(this);">
+                <p>Create a User Login</p>
+                <fieldset>
+                    <legend>First Name</legend>
+                    <input id="firstName" name="firstName" type="text"><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Last Name</legend>
+                    <input id="lastName" name="lastName" type="text"><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Email Address</legend>
+                    <input id="email" name="email" type="text"><br>
+                    example@example.com
+                </fieldset>
+                <fieldset>
+                    <legend>Password</legend>
+                    <input id="password" name="password" type="text"><br>
+                    Requirements:<br>
+                    6 to 20 characters in length<br>
+                    uppercase letter<br>
+                    lowercase letter<br>
+                    number<br>
+                    special character: @#$!%<br>
+                </fieldset>
+                
+                <input type="submit" value="Submit">
+            </form>
+            <form id="signin" name="signin" method="post" action="surveyResults.html" onSubmit="return signIn(this);">
+                <p>Sign In with Existing User</p>
+                <fieldset>
+                    <legend>Email Address</legend>
+                    <input id="email" name="email" type="text"><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Password</legend>
+                    <input id="password" name="password" type="text"><br>
+                </fieldset>
+                
+                <input type="submit" value="Submit">
+            </form>
+        </div>
+        <script>
+            //regular expressions for form inputs
+            var nameExp =     /^[a-zA-Z]+$/;
+            var emailExp =    /^[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$/;
+            var passwordExp = /((?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[@#$!%]).{6,20})/;
+            
+            function validate(){ //validates form responses using regular expressions and alerts invalid responses with error messages
+                var firstName = document.create.firstName.value;
+                var lastName = document.create.lastName.value;
+                var email = document.create.email.value;
+                var password = document.create.password.value;
+                var errors = [];
+
+                if (!nameExp.test(firstName)) {
+                    errors[errors.length] = "Please enter a valid first name.";
+                }
+                if (!nameExp.test(lastName)){
+                    errors[errors.length] = "Please enter a valid last name.";
+                }
+                if (!emailExp.test(email)) {
+                    errors[errors.length] = "Please enter a valid email address.";
+                }
+                if (!passwordExp.test(password)){
+                    errors[errors.length] = "Please enter a valid password.";
+                }
+
+                if (errors.length > 0) {
+                    reportErrors(errors);
+                    return false;
+                }
+                //store the user's information for later use
+                localStorage.setItem("user", email);
+                localStorage.setItem(email, JSON.stringify({
+                    "firstName": firstName,
+                    "lastName": lastName,
+                    "password": password,
+                }));
+                return true;
+            }
+            
+            function signIn(){ //checks if user exists and if the email and password are correct
+                var email = document.signin.email.value;
+                var password = document.signin.password.value;
+                var errors = [];
+                if (!localStorage.getItem(email)) {
+                    errors[errors.length] = "Please enter a valid email address.";
+                }
+                else {
+                    var obj = JSON.parse(localStorage.getItem(email));
+                    if (password !== obj.password) {
+                        errors[errors.length] = "Incorrect password";
+                    }
+                    else{
+                        localStorage.setItem("user", email);
+                    }
+                }
+                if (errors.length > 0) {
+                    reportErrors(errors);
+                    return false;
+                }
+                return true;
+            };
+
+            function reportErrors(errors) { //displays error messages using an alert box
+                var msg = "Errors found...\n";
+                for (var i = 0; i < errors.length; i++) {
+                    var numError = i + 1;
+                    msg += "\n" + numError + ": " + errors[i];
+                }
+                alert(msg);
+            }
+        </script>
+    </body>
+</html>

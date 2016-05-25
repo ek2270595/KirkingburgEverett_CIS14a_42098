@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<!--
+Everett Kirkingburg
+CIS14a - 42098
+May 18, 2016
+-->
+<html>
+    <head>
+        <title>Survey Results</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+            .container{
+                margin: auto;
+                background-color: lightgray;
+                width: 800px;
+                height: auto;
+            }
+            .chart{
+                display: table-cell;
+            }
+            .info{
+                background-color: gainsboro;
+                display: table-cell;
+                width: 415px;
+            }
+        </style>
+    </head>
+    <body onload="showUserResults();">
+        <div id="userResults" class="container">
+            <div class="chart">
+                <h3>Actual Expenditures</h3>
+                <img src="FedBudgetPi.png" width="385" height="679" alt="FedBudgetPi"/>
+            </div>
+            <div class="info">
+                <h3><span id="userName"></span>Answers</h3>
+                <fieldset>
+                <legend>Question 1</legend>
+                    How large is the military budget?<br>
+                    <span id="0" style="color:#ff3333">&GT;20% of the Federal Budget</span><br>
+                    <span id="1" style="color:#00cc00">&lt;20% of the Federal Budget</span><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Question 2</legend>
+                    How large is NASA's budget?<br>
+                    <span id="2" style="color:#ff3333">&GT;5% of the Federal Budget</span><br>
+                    <span id="3" style="color:#00cc00">&lt;5% of the Federal Budget</span><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Question 3</legend>
+                    How large is the budget for Welfare and Entitlements?<br>
+                    <span id="4" style="color:#00cc00">&GT;65% of the Federal Budget</span><br>
+                    <span id="5" style="color:#ff3333">&lt;65% of the Federal Budget</span><br>
+                </fieldset>
+            </div>
+            <button onclick="showTotalResults()">View Totals</button>
+        </div>
+        <div id="totalResults" class="container" hidden>
+            <div class="chart">
+                <h3>Actual Expenditures</h3>
+                <img src="FedBudgetPi.png" width="385" height="679" alt="FedBudgetPi"/>
+            </div>
+            <div class="info">
+                <h3>Results from <span id="amount"></span> Survey(s)</h3>
+                <fieldset>
+                    <legend>Question 1</legend>
+                    How large is the military budget?<br>
+                    <span id="6" style="color:#ff3333">% of users answered &GT;20% of the Federal Budget</span><br>
+                    <span id="7" style="color:#00cc00">% of users answered &lt;20% of the Federal Budget</span><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Question 2</legend>
+                    How large is NASA's budget?<br>
+                    <span id="8" style="color:#ff3333">% of users answered &GT;5% of the Federal Budget</span><br>
+                    <span id="9" style="color:#00cc00">% of users answered &lt;5% of the Federal Budget</span><br>
+                </fieldset>
+                <fieldset>
+                    <legend>Question 3</legend>
+                    How large is the budget for Welfare and Entitlements?<br>
+                    <span id="10" style="color:#00cc00">% of users answered &GT;65% of the Federal Budget</span><br>
+                    <span id="11" style="color:#ff3333">% of users answered &lt;65% of the Federal Budget</span><br>
+                </fieldset>
+            </div>
+            <form action="index.html">
+                <button type="submit">Main Page</button>
+            </form>
+        </div>
+        <script>
+            function getForm(url){
+                var info=url.split("?");
+                var nameValuePairs=info[1].split("&");
+                var $_GET = new Object;
+                for(var i=0;i<nameValuePairs.length-1;i++){
+                    var map=nameValuePairs[i].split("=");
+                    var name=map[0];
+                    var value=map[1];
+                    $_GET[name]=value;
+                }
+                return $_GET;
+            }
+            function showUserResults(){
+                var user = localStorage.getItem("user");
+                var userInfo = JSON.parse(localStorage.getItem(user));
+                var $_GET;
+                if(userInfo.answers === undefined){ //checks to see if the user has previously answered the survey
+                    $_GET = getForm(document.location.href);
+                    userInfo.answers = getForm(document.location.href);
+                    localStorage.setItem(user, JSON.stringify(userInfo));
+                    //if the local storage "Totals" key does not exist, 
+                    //store the object of answeres in an array,
+                    //stringify the array, and set it in local storage
+                    if(localStorage.getItem("Totals") === null){
+                        var results = [$_GET];
+                        var str = JSON.stringify(results);
+                        localStorage.setItem("Totals", str);
+                    }
+                    //else pull the string from storage, parse back into an array,
+                    //append the new object of answers to the array, and store back
+                    else{
+                        var str = localStorage.getItem("Totals");
+                        var results = JSON.parse(str);
+                        var number = results.length;
+                        results[number] = $_GET;
+                        str = JSON.stringify(results);
+                        localStorage.setItem("Totals", str);
+                    }
+                }
+                else{
+                    $_GET = userInfo.answers; //set equal to if users have previous answers
+                }
+                //display the user's name in heading
+                document.getElementById("userName").innerHTML =
+                        userInfo.firstName+" "+userInfo.lastName+"\'s ";
+                //show whether the user answered greater than or less than
+                var count = 0;
+                for(property in $_GET){
+                    if($_GET[property] === "A"){
+                        count++;
+                        document.getElementById(count).setAttribute("hidden",true);
+                    }
+                    else{
+                        document.getElementById(count).setAttribute("hidden",true);
+                        count++;
+                    }
+                    count++;
+                }
+            }
+            function showTotalResults(){
+                document.getElementById("userResults").setAttribute("hidden",true);
+                document.getElementById("totalResults").removeAttribute("hidden");
+                var results = JSON.parse(localStorage.getItem("Totals"));
+                var numSurveys = results.length;
+                var question = [0,0,0];
+                var percentage = [];
+                //Checks how many times each of the questions were answered with A
+                for(var i = 0; i < results.length; i++){
+                    var obj = results[i];
+                    for(property in obj){
+                        if(property === "qOne" && obj[property] === "A") question[0]+=1;
+                        if(property === "qTwo" && obj[property] === "A") question[1]+=1;
+                        if(property === "qThr" && obj[property] === "A") question[2]+=1;
+                    }
+                }
+                //Stores percentages of times questions 1 through 3 were
+                //answered with A or B
+                var count = 0;
+                for(var i = 0; i < question.length; i++){
+                    percentage[count] = (question[i]/numSurveys)*100;
+                    count++;
+                    percentage[count] = ((numSurveys - question[i])/numSurveys)*100;
+                    count++;
+                }
+                //Display the number of surveys
+                document.getElementById("amount").innerHTML = numSurveys;
+                //Display percentages of each answer sequentially
+                for(var i = 0; i < percentage.length; i++){
+                    var id = document.getElementById(6+i);
+                    id.innerHTML = percentage[i].toFixed(1)+id.innerHTML;
+                }
+            }
+        </script>
+    </body>
+</html>
